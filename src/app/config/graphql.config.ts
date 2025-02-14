@@ -1,5 +1,6 @@
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigService } from '@nestjs/config';
+import type { Request, Response } from 'express';
 import { join } from 'path';
 
 import { isDev } from '@/src/shared/utils/is-dev.util';

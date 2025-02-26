@@ -1,7 +1,7 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -12,7 +12,9 @@ import { Request } from 'express';
 import { PrismaService } from '@/src/app/prisma/prisma.service';
 import { RedisService } from '@/src/app/redis/redis.service';
 import { getSessionMetadata } from '@/src/shared/utils/session-metadata.util';
+import { destroySession, saveSession } from '@/src/shared/utils/session.util';
 
+import { VerificationService } from '../verification/verification.service';
 import { LoginInput } from './inputs/login.input';
 import { SessionModel } from './models/session.model';
 
@@ -22,6 +24,7 @@ export class SessionService {
     private readonly prismaService: PrismaService,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
+    private readonly verificationService: VerificationService,
   ) {}
 
   public async findByUser(req: Request) {
@@ -112,40 +115,20 @@ export class SessionService {
       throw new UnauthorizedException('Incorrect password');
     }
 
+    if (!user.isEmailVerified) {
+      await this.verificationService.sendVerificationToken(user);
+
+      throw new BadRequestException(
+        'Account not verified. Please check your email',
+      );
+    }
+
     const metadata = getSessionMetadata(req, userAgent);
 
-    return new Promise((resolve, reject) => {
-      req.session.createdAt = new Date();
-      req.session.userId = user.id;
-      req.session.sessionMetadata = metadata;
-
-      req.session.save(err => {
-        if (err) {
-          return reject(
-            new InternalServerErrorException('Failed to save session'),
-          );
-        }
-
-        resolve(user);
-      });
-    });
+    return saveSession(req, user, metadata);
   }
 
   public async logout(req: Request) {
-    return new Promise((resolve, reject) => {
-      req.session.destroy(err => {
-        if (err) {
-          return reject(
-            new InternalServerErrorException('Failed to end session'),
-          );
-        }
-
-        req.res.clearCookie(
-          this.configService.getOrThrow<string>('SESSION_NAME'),
-        );
-
-        resolve(true);
-      });
-    });
+    return destroySession(req, this.configService);
   }
 }

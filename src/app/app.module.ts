@@ -9,6 +9,7 @@ import { VerificationModule } from '../modules/auth/verification/verification.mo
 import { MailModule } from '../modules/libs/mail/mail.module';
 import { IS_DEV_ENV } from '../shared/utils/is-dev.util';
 
+import { PasswordRecoveryModule } from '../modules/auth/password-recovery/password-recovery.module';
 import { getGraphqlConfig } from './config/graphql.config';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
@@ -31,6 +32,7 @@ import { RedisModule } from './redis/redis.module';
     AccountModule,
     SessionModule,
     VerificationModule,
+    PasswordRecoveryModule,
   ],
 })
 export class AppModule {}

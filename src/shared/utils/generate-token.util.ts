@@ -7,7 +7,7 @@ export const generateToken = async (
   prismaService: PrismaService,
   user: User,
   type: TokenType,
-  isUUID: boolean = false,
+  isUUID: boolean = true,
 ) => {
   let token: string;
 

@@ -23,7 +23,7 @@ export const saveSession = (
         );
       }
 
-      resolve(user);
+      resolve({ user });
     });
   });
 };

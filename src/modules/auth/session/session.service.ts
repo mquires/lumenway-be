@@ -8,6 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { verify } from 'argon2';
 import { Request } from 'express';
+import { TOTP } from 'otpauth';
 
 import { PrismaService } from '@/src/app/prisma/prisma.service';
 import { RedisService } from '@/src/app/redis/redis.service';
@@ -15,6 +16,7 @@ import { getSessionMetadata } from '@/src/shared/utils/session-metadata.util';
 import { destroySession, saveSession } from '@/src/shared/utils/session.util';
 
 import { VerificationService } from '../verification/verification.service';
+
 import { LoginInput } from './inputs/login.input';
 import { SessionModel } from './models/session.model';
 
@@ -97,7 +99,7 @@ export class SessionService {
   }
 
   public async login(req: Request, input: LoginInput, userAgent: string) {
-    const { login, password } = input;
+    const { login, password, pin } = input;
 
     const user = await this.prismaService.user.findFirst({
       where: {
@@ -121,6 +123,28 @@ export class SessionService {
       throw new BadRequestException(
         'Account not verified. Please check your email',
       );
+    }
+
+    if (user.isTotpEnabled) {
+      if (!pin) {
+        return {
+          message: 'You must enter the code to complete authorization',
+        };
+      }
+
+      const totp = new TOTP({
+        issuer: 'Lumenway',
+        label: `${user.email}`,
+        algorithm: 'SHA1',
+        digits: 6,
+        secret: user.totpSecret,
+      });
+
+      const delta = totp.validate({ token: pin });
+
+      if (delta === null) {
+        throw new BadRequestException('Code is incorrect!');
+      }
     }
 
     const metadata = getSessionMetadata(req, userAgent);

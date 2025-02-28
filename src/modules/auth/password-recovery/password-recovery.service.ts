@@ -1,7 +1,3 @@
-import { TokenType } from '@/prisma/generated';
-import { PrismaService } from '@/src/app/prisma/prisma.service';
-import { generateToken } from '@/src/shared/utils/generate-token.util';
-import { getSessionMetadata } from '@/src/shared/utils/session-metadata.util';
 import {
   BadRequestException,
   Injectable,
@@ -10,7 +6,14 @@ import {
 } from '@nestjs/common';
 import { hash } from 'argon2';
 import { Request } from 'express';
+
+import { TokenType } from '@/prisma/generated';
+import { PrismaService } from '@/src/app/prisma/prisma.service';
+import { generateToken } from '@/src/shared/utils/generate-token.util';
+import { getSessionMetadata } from '@/src/shared/utils/session-metadata.util';
+
 import { MailService } from '../../libs/mail/mail.service';
+
 import { NewPasswordInput } from './inputs/new-password.input';
 import { ResetPasswordInput } from './inputs/reset-password.input';
 

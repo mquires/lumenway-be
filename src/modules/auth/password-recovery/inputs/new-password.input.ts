@@ -1,4 +1,3 @@
-import { IsPasswordsMatchingConstraint } from '@/src/shared/decorators/is-passwords-matching-constraint';
 import { Field, InputType } from '@nestjs/graphql';
 import {
   IsNotEmpty,
@@ -7,6 +6,8 @@ import {
   MinLength,
   Validate,
 } from 'class-validator';
+
+import { IsPasswordsMatchingConstraint } from '@/src/shared/decorators/is-passwords-matching-constraint';
 
 @InputType()
 export class NewPasswordInput {

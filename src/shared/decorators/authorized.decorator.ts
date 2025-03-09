@@ -3,6 +3,11 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { User } from '@/prisma/generated';
 
+/**
+ * Decorator to extract authenticated user data from request
+ * @param data - User property to extract
+ * @returns Full user object or specified user property
+ */
 interface AuthorizedRequest extends Request {
   user: User;
 }

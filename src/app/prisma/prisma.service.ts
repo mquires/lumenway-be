@@ -5,6 +5,10 @@ import {
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/generated';
 
+/**
+ * Service for managing Prisma client instance and database connections
+ */
+
 @Injectable()
 export class PrismaService
   extends PrismaClient

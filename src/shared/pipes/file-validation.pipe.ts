@@ -8,8 +8,18 @@ interface FileUpload {
   createReadStream: () => ReadStream;
 }
 
+/**
+ * Pipe for validating file uploads
+ * Checks file format and size constraints
+ */
 @Injectable()
 export class FileValidationPipe implements PipeTransform {
+  /**
+   * Validates uploaded file
+   * @param value - File upload object containing filename and stream
+   * @throws BadRequestException if file is invalid
+   * @returns Original file upload object if validation passes
+   */
   public async transform(value: FileUpload) {
     if (!value.filename) {
       throw new BadRequestException('File not uploaded');
@@ -27,7 +37,7 @@ export class FileValidationPipe implements PipeTransform {
 
     const isFileSizeValid = await validateFileSize(
       fileStream,
-      10 * 1024 * 1024,
+      10 * 1024 * 1024, // 10MB limit
     );
 
     if (!isFileSizeValid) {

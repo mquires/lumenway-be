@@ -8,6 +8,9 @@ import {
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+/**
+ * Service for managing file operations with S3-compatible storage
+ */
 @Injectable()
 export class S3Service {
   private readonly client: S3Client;
@@ -28,6 +31,12 @@ export class S3Service {
     this.bucket = this.configService.getOrThrow<string>('S3_BUCKET_NAME');
   }
 
+  /**
+   * Uploads file to S3 bucket
+   * @param buffer - File content buffer
+   * @param key - File key/path in bucket
+   * @param mimetype - File MIME type
+   */
   public async upload(buffer: Buffer, key: string, mimetype: string) {
     const command: PutObjectCommandInput = {
       Bucket: this.bucket,
@@ -39,6 +48,10 @@ export class S3Service {
     await this.client.send(new PutObjectCommand(command));
   }
 
+  /**
+   * Removes file from S3 bucket
+   * @param key - File key/path in bucket
+   */
   public async remove(key: string) {
     const command: DeleteObjectCommandInput = {
       Bucket: this.bucket,

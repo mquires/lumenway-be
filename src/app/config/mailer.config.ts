@@ -1,6 +1,12 @@
 import type { MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 
+/**
+ * Creates Mailer configuration for NestJS
+ * @param configService - NestJS config service for accessing environment variables
+ * @returns Mailer configuration object
+ */
+
 export const getMailerConfig = (
   configService: ConfigService,
 ): MailerOptions => {

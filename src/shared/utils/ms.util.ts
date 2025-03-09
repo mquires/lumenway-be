@@ -45,6 +45,15 @@ export type StringValue =
   | `${number}${UnitAnyCase}`
   | `${number} ${UnitAnyCase}`;
 
+/**
+ * Converts time string to milliseconds
+ * @param str - Time string (e.g. "1d", "2 hours", "500ms")
+ * @returns Number of milliseconds
+ * @throws Error if string format is invalid
+ * @example
+ * ms("2d")     // 172800000
+ * ms("3 hours") // 10800000
+ */
 export function ms(str: StringValue): number {
   if (typeof str !== 'string' || str.length === 0 || str.length > 100) {
     throw new Error(
@@ -105,7 +114,7 @@ export function ms(str: StringValue): number {
       return n;
     default:
       throw new Error(
-        `Error: Time unit ${type} was recognized, but no corresponding case exists. Please check your input.`,
+        `Error: Time unit "${type as string}" was recognized, but no corresponding case exists. Please check your input.`,
       );
   }
 }

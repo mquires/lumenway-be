@@ -16,10 +16,19 @@ interface ActivateRequest extends Request {
   user: User;
 }
 
+/**
+ * Guard for GraphQL authentication
+ * Validates session and attaches user to request
+ */
 @Injectable()
 export class GqlAuthGuard implements CanActivate {
   public constructor(private readonly prismaService: PrismaService) {}
 
+  /**
+   * Checks if request is authenticated
+   * @throws UnauthorizedException if user is not logged in
+   * @returns true if user is authenticated
+   */
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
     const request = ctx.getContext<{ req: ActivateRequest }>().req;

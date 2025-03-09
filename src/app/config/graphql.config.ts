@@ -5,6 +5,12 @@ import { join } from 'path';
 
 import { isDev } from '@/src/shared/utils/is-dev.util';
 
+/**
+ * Creates Apollo Server configuration for GraphQL
+ * @param configService - NestJS config service for accessing environment variables
+ * @returns Apollo driver configuration object
+ */
+
 export const getGraphqlConfig = (
   configService: ConfigService,
 ): ApolloDriverConfig => {

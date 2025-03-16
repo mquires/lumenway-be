@@ -4,6 +4,12 @@ import * as sharp from 'sharp';
 
 import type { User } from '@/prisma/generated';
 import { PrismaService } from '@/src/app/prisma/prisma.service';
+import {
+  SocialLinkInput,
+  SocialLinkOrderInput,
+} from '@/src/modules/auth/profile/inputs/social-link.input';
+
+// Prisma auto-generated types
 
 import { S3Service } from '../../libs/s3/s3.service';
 
@@ -92,6 +98,92 @@ export class ProfileService {
         username,
         displayName,
         bio,
+      },
+    });
+
+    return true;
+  }
+
+  public async getSocialLinks(user: User) {
+    const socialLinks = await this.prismaService.socialLink.findMany({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        position: 'asc',
+      },
+    });
+
+    return socialLinks;
+  }
+
+  public async createSocialLink(user: User, input: SocialLinkInput) {
+    const { title, url } = input;
+
+    const lastSocialLink = await this.prismaService.socialLink.findFirst({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        position: 'desc',
+      },
+    });
+
+    const newPosition = lastSocialLink ? lastSocialLink.position + 1 : 1;
+
+    await this.prismaService.socialLink.create({
+      data: {
+        title,
+        url,
+        position: newPosition,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+
+    return true;
+  }
+
+  public async reorderSocialLinks(input: SocialLinkOrderInput[]) {
+    if (!input.length) return;
+
+    const updateSocialLinkPromises = input.map(socialLink => {
+      return this.prismaService.socialLink.update({
+        where: { id: socialLink.id },
+        data: {
+          position: socialLink.position,
+        },
+      });
+    });
+
+    await Promise.all(updateSocialLinkPromises);
+
+    return true;
+  }
+
+  public async updateSocialLink(id: string, input: SocialLinkInput) {
+    const { title, url } = input;
+
+    await this.prismaService.socialLink.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        url,
+      },
+    });
+
+    return true;
+  }
+
+  public async deleteSocialLink(id: string) {
+    await this.prismaService.socialLink.delete({
+      where: {
+        id,
       },
     });
 

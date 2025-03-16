@@ -1,8 +1,13 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import * as Upload from 'graphql-upload/Upload.js';
 
 import type { User } from '@/prisma/generated';
+import {
+  SocialLinkInput,
+  SocialLinkOrderInput,
+} from '@/src/modules/auth/profile/inputs/social-link.input';
+import { SocialLinkModel } from '@/src/modules/auth/profile/models/social-link.model';
 import { Authorization } from '@/src/shared/decorators/auth.decorator';
 import { Authorized } from '@/src/shared/decorators/authorized.decorator';
 import { FileValidationPipe } from '@/src/shared/pipes/file-validation.pipe';
@@ -20,13 +25,13 @@ export class ProfileResolver {
     @Authorized() user: User,
     @Args('avatar', { type: () => GraphQLUpload }, FileValidationPipe)
     avatar: Upload,
-  ): Promise<boolean> {
+  ) {
     return this.profileService.changeAvatar(user, avatar);
   }
 
   @Authorization()
   @Mutation(() => Boolean, { name: 'removeProfileAvatar' })
-  public async removeAvatar(@Authorized() user: User): Promise<boolean> {
+  public async removeAvatar(@Authorized() user: User) {
     return this.profileService.removeAvatar(user);
   }
 
@@ -35,7 +40,46 @@ export class ProfileResolver {
   public async changeInfo(
     @Authorized() user: User,
     @Args('data') input: ChangeProfileInfoInput,
-  ): Promise<boolean> {
+  ) {
     return this.profileService.changeInfo(user, input);
+  }
+
+  @Authorization()
+  @Mutation(() => Boolean, { name: 'createSocialLink' })
+  public async createSocialLink(
+    @Authorized() user: User,
+    @Args('data') input: SocialLinkInput,
+  ) {
+    return this.profileService.createSocialLink(user, input);
+  }
+
+  @Authorization()
+  @Mutation(() => Boolean, { name: 'reorderSocialLinks' })
+  public async reorderSocialLinks(
+    @Args('list', { type: () => [SocialLinkOrderInput] })
+    input: SocialLinkOrderInput[],
+  ) {
+    return this.profileService.reorderSocialLinks(input);
+  }
+
+  @Authorization()
+  @Mutation(() => Boolean, { name: 'updateSocialLink' })
+  public async updateSocialLink(
+    @Args('id') id: string,
+    @Args('data') input: SocialLinkInput,
+  ) {
+    return this.profileService.updateSocialLink(id, input);
+  }
+
+  @Authorization()
+  @Mutation(() => Boolean, { name: 'deleteSocialLink' })
+  public async deleteSocialLink(@Args('id') id: string) {
+    return this.profileService.deleteSocialLink(id);
+  }
+
+  @Authorization()
+  @Query(() => [SocialLinkModel], { name: 'getSocialLinks' })
+  public async getSocialLinks(@Authorized() user: User) {
+    return this.profileService.getSocialLinks(user);
   }
 }

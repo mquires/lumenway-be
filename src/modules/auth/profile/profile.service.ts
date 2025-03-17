@@ -9,8 +9,6 @@ import {
   SocialLinkOrderInput,
 } from '@/src/modules/auth/profile/inputs/social-link.input';
 
-// Prisma auto-generated types
-
 import { S3Service } from '../../libs/s3/s3.service';
 
 import { ChangeProfileInfoInput } from './inputs/change-profile-info.input';

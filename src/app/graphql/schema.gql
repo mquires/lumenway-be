@@ -22,6 +22,11 @@ input ChangeProfileInfoInput {
   username: String!
 }
 
+input ChangeStreamInfoInput {
+  categoryId: String!
+  title: String!
+}
+
 input CreateUserInput {
   email: String!
   password: String!
@@ -50,6 +55,12 @@ input EnableTotpInput {
   secret: String!
 }
 
+input FiltersInput {
+  searchTerm: String
+  skip: Float
+  take: Float
+}
+
 type LocationModel {
   city: String!
   country: String!
@@ -66,6 +77,8 @@ input LoginInput {
 type Mutation {
   changeProfileAvatar(avatar: Upload!): Boolean!
   changeProfileInfo(data: ChangeProfileInfoInput!): Boolean!
+  changeStreamInfo(data: ChangeStreamInfoInput!): Boolean!
+  changeStreamThumbnail(thumbnail: Upload!): Boolean!
   changeUserEmail(data: ChangeEmailInput!): Boolean!
   changeUserPassword(data: ChangePasswordInput!): Boolean!
   clearSessionCookie: Boolean!
@@ -80,6 +93,7 @@ type Mutation {
   newPassword(data: NewPasswordInput!): Boolean!
   removeProfileAvatar: Boolean!
   removeSession(id: String!): Boolean!
+  removeStreamThumbnail: Boolean!
   reorderSocialLinks(list: [SocialLinkOrderInput!]!): Boolean!
   resetPassword(data: ResetPasswordInput!): Boolean!
   updateSocialLink(data: SocialLinkInput!, id: String!): Boolean!
@@ -93,8 +107,10 @@ input NewPasswordInput {
 }
 
 type Query {
+  findAllStreams(filters: FiltersInput!): [StreamModel!]!
   findCurrentSession: SessionModel!
   findProfile: UserModel!
+  findRandomStreams: [StreamModel!]!
   findSessionsByUser: [SessionModel!]!
   generateTotpSecret: TotpModel!
   getSocialLinks: [SocialLinkModel!]!
@@ -138,6 +154,20 @@ input SocialLinkOrderInput {
   position: Float!
 }
 
+type StreamModel {
+  createdAt: DateTime!
+  id: ID!
+  ingressId: String
+  isLive: Boolean!
+  serverUrl: String
+  streamKey: String
+  thumbnailUrl: String
+  title: String!
+  updatedAt: DateTime!
+  user: UserModel!
+  userId: String!
+}
+
 type TotpModel {
   qrcodeUrl: String!
   secret: String!
@@ -159,6 +189,8 @@ type UserModel {
   isTotpEnabled: Boolean!
   isVerified: Boolean!
   password: String!
+  socialLinks: [SocialLinkModel!]!
+  stream: StreamModel!
   totpSecret: String!
   updatedAt: DateTime!
   username: String!

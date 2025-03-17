@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 
+import { StreamModule } from '@/src/modules/stream/stream.module';
+
 import { AccountModule } from '../modules/auth/account/account.module';
 import { DeactivateModule } from '../modules/auth/deactivate/deactivate.module';
 import { PasswordRecoveryModule } from '../modules/auth/password-recovery/password-recovery.module';
@@ -43,6 +45,7 @@ import { RedisModule } from './redis/redis.module';
     DeactivateModule,
     CronModule,
     S3Module,
+    StreamModule,
   ],
 })
 export class AppModule {}

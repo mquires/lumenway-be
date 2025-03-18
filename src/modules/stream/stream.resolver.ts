@@ -16,7 +16,7 @@ import { StreamService } from './stream.service';
 
 @Resolver('Stream')
 export class StreamResolver {
-  constructor(private readonly streamService: StreamService) {}
+  public constructor(private readonly streamService: StreamService) {}
 
   @Query(() => [StreamModel], { name: 'findAllStreams' })
   public async findAll(@Args('filters') input: FiltersInput) {

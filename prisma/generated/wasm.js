@@ -164,6 +164,17 @@ exports.Prisma.StreamScalarFieldEnum = {
   streamKey: 'streamKey',
   isLive: 'isLive',
   userId: 'userId',
+  categoryId: 'categoryId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  thumbnailUrl: 'thumbnailUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -192,7 +203,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   SocialLink: 'SocialLink',
   Token: 'Token',
-  Stream: 'Stream'
+  Stream: 'Stream',
+  Category: 'Category'
 };
 
 /**

@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 
 import { getLiveKitConfig } from '@/src/app/config/livekit.config';
+import { CategoryModule } from '@/src/modules/category/category.module';
 import { LivekitModule } from '@/src/modules/libs/livekit/livekit.module';
 import { IngressModule } from '@/src/modules/stream/ingress/ingress.module';
 import { StreamModule } from '@/src/modules/stream/stream.module';
@@ -57,6 +58,7 @@ import { RedisModule } from './redis/redis.module';
     StreamModule,
     IngressModule,
     WebhookModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}

@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as Upload from 'graphql-upload/Upload.js';
+import { AccessToken } from 'livekit-server-sdk';
 import * as sharp from 'sharp';
 
 import type { Prisma, User } from '@/prisma/generated';
@@ -7,12 +9,14 @@ import { PrismaService } from '@/src/app/prisma/prisma.service';
 import { S3Service } from '@/src/modules/libs/s3/s3.service';
 import { ChangeStreamInfoInput } from '@/src/modules/stream/inputs/change-stream-info.input';
 import { FiltersInput } from '@/src/modules/stream/inputs/filters.input';
+import { GenerateStreamTokenInput } from '@/src/modules/stream/inputs/generate-stream-token.input';
 
 @Injectable()
 export class StreamService {
   public constructor(
     private readonly prismaService: PrismaService,
     private readonly s3Service: S3Service,
+    private readonly configService: ConfigService,
   ) {}
 
   public async findAll(input: FiltersInput = {}) {
@@ -141,6 +145,56 @@ export class StreamService {
     });
 
     return true;
+  }
+
+  public async generateStreamToken(input: GenerateStreamTokenInput) {
+    const { userId, channelId } = input;
+
+    let self: { id: string; username: string };
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (user) {
+      self = { id: user.id, username: user.username };
+    } else {
+      self = {
+        id: userId,
+        username: `Viewer ${Math.floor(Math.random() * 100000)}`,
+      };
+    }
+
+    const channel = await this.prismaService.user.findUnique({
+      where: {
+        id: channelId,
+      },
+    });
+
+    if (!channel) {
+      throw new NotFoundException('Channel not found');
+    }
+
+    const isHost = self.id === channel.id;
+
+    const token = new AccessToken(
+      this.configService.getOrThrow<string>('LIVEKIT_API_KEY'),
+      this.configService.getOrThrow<string>('LIVEKIT_API_SECRET'),
+      {
+        identity: isHost ? `Host-${self.id}` : self.id.toString(),
+        name: self.username,
+      },
+    );
+
+    token.addGrant({
+      room: channel.id,
+      roomJoin: true,
+      canPublish: false,
+    });
+
+    return { token: token.toJwt() };
   }
 
   private async processFile(buffer: Buffer, isGif: boolean): Promise<Buffer> {

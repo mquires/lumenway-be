@@ -55,8 +55,6 @@ export class SessionService {
       }
     }
 
-    console.log('userSessions', userSessions);
-
     userSessions.sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),

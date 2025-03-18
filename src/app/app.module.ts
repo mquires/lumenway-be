@@ -7,6 +7,7 @@ import { getLiveKitConfig } from '@/src/app/config/livekit.config';
 import { LivekitModule } from '@/src/modules/libs/livekit/livekit.module';
 import { IngressModule } from '@/src/modules/stream/ingress/ingress.module';
 import { StreamModule } from '@/src/modules/stream/stream.module';
+import { WebhookModule } from '@/src/modules/webhook/webhook.module';
 
 import { AccountModule } from '../modules/auth/account/account.module';
 import { DeactivateModule } from '../modules/auth/deactivate/deactivate.module';
@@ -55,6 +56,7 @@ import { RedisModule } from './redis/redis.module';
     CronModule,
     StreamModule,
     IngressModule,
+    WebhookModule,
   ],
 })
 export class AppModule {}

@@ -3,6 +3,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 
+import { getLiveKitConfig } from '@/src/app/config/livekit.config';
+import { LivekitModule } from '@/src/modules/libs/livekit/livekit.module';
+import { IngressModule } from '@/src/modules/stream/ingress/ingress.module';
 import { StreamModule } from '@/src/modules/stream/stream.module';
 
 import { AccountModule } from '../modules/auth/account/account.module';
@@ -36,6 +39,12 @@ import { RedisModule } from './redis/redis.module';
     PrismaModule,
     RedisModule,
     MailModule,
+    S3Module,
+    LivekitModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: getLiveKitConfig,
+      inject: [ConfigService],
+    }),
     AccountModule,
     SessionModule,
     VerificationModule,
@@ -44,8 +53,8 @@ import { RedisModule } from './redis/redis.module';
     TotpModule,
     DeactivateModule,
     CronModule,
-    S3Module,
     StreamModule,
+    IngressModule,
   ],
 })
 export class AppModule {}

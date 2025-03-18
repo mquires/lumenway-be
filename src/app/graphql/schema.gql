@@ -82,6 +82,7 @@ type Mutation {
   changeUserEmail(data: ChangeEmailInput!): Boolean!
   changeUserPassword(data: ChangePasswordInput!): Boolean!
   clearSessionCookie: Boolean!
+  createIngress(ingressType: Float!): Boolean!
   createSocialLink(data: SocialLinkInput!): Boolean!
   createUser(data: CreateUserInput!): Boolean!
   deactivateAccount(data: DeactivateAccountInput!): AuthModel!

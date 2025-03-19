@@ -5,6 +5,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 
 import { getLiveKitConfig } from '@/src/app/config/livekit.config';
 import { CategoryModule } from '@/src/modules/category/category.module';
+import { ChannelModule } from '@/src/modules/channel/channel.module';
+import { ChatModule } from '@/src/modules/chat/chat.module';
+import { FollowModule } from '@/src/modules/follow/follow.module';
 import { LivekitModule } from '@/src/modules/libs/livekit/livekit.module';
 import { IngressModule } from '@/src/modules/stream/ingress/ingress.module';
 import { StreamModule } from '@/src/modules/stream/stream.module';
@@ -59,6 +62,9 @@ import { RedisModule } from './redis/redis.module';
     IngressModule,
     WebhookModule,
     CategoryModule,
+    ChatModule,
+    FollowModule,
+    ChannelModule,
   ],
 })
 export class AppModule {}

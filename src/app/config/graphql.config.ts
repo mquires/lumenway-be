@@ -20,5 +20,6 @@ export const getGraphqlConfig = (
     autoSchemaFile: join(process.cwd(), 'src/app/graphql/schema.gql'),
     sortSchema: true,
     context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
+    installSubscriptionHandlers: true,
   };
 };

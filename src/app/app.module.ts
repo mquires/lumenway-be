@@ -9,6 +9,8 @@ import { ChannelModule } from '@/src/modules/channel/channel.module';
 import { ChatModule } from '@/src/modules/chat/chat.module';
 import { FollowModule } from '@/src/modules/follow/follow.module';
 import { LivekitModule } from '@/src/modules/libs/livekit/livekit.module';
+import { TelegramModule } from '@/src/modules/libs/telegram/telegram.module';
+import { NotificationModule } from '@/src/modules/notification/notification.module';
 import { IngressModule } from '@/src/modules/stream/ingress/ingress.module';
 import { StreamModule } from '@/src/modules/stream/stream.module';
 import { WebhookModule } from '@/src/modules/webhook/webhook.module';
@@ -50,6 +52,7 @@ import { RedisModule } from './redis/redis.module';
       useFactory: getLiveKitConfig,
       inject: [ConfigService],
     }),
+    TelegramModule,
     AccountModule,
     SessionModule,
     VerificationModule,
@@ -65,6 +68,7 @@ import { RedisModule } from './redis/redis.module';
     ChatModule,
     FollowModule,
     ChannelModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

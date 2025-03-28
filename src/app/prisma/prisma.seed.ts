@@ -78,6 +78,9 @@ const main = async () => {
                   ],
                 },
               },
+              notificationSettings: {
+                create: {},
+              },
             },
           });
 

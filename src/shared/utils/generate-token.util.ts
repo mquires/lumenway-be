@@ -57,7 +57,11 @@ export const generateToken = async (
       },
     },
     include: {
-      user: true,
+      user: {
+        include: {
+          notificationSettings: true,
+        },
+      },
     },
   });
 

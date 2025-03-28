@@ -6,10 +6,16 @@ import {
 
 import type { User } from '@/prisma/generated';
 import { PrismaService } from '@/src/app/prisma/prisma.service';
+import { TelegramService } from '@/src/modules/libs/telegram/telegram.service';
+import { NotificationService } from '@/src/modules/notification/notification.service';
 
 @Injectable()
 export class FollowService {
-  public constructor(private readonly prismaService: PrismaService) {}
+  public constructor(
+    private readonly prismaService: PrismaService,
+    private readonly notificationService: NotificationService,
+    private readonly telegramService: TelegramService,
+  ) {}
 
   public async findMyFollowers(user: User) {
     const followers = await this.prismaService.follow.findMany({
@@ -69,12 +75,37 @@ export class FollowService {
       throw new BadRequestException('You are already following this channel');
     }
 
-    await this.prismaService.follow.create({
+    const follow = await this.prismaService.follow.create({
       data: {
         followerId: user.id,
         followingId: channel.id,
       },
+      include: {
+        follower: true,
+        following: {
+          include: {
+            notificationSettings: true,
+          },
+        },
+      },
     });
+
+    if (follow.following.notificationSettings.webNotifications) {
+      await this.notificationService.createNewFollowing(
+        follow.following.id,
+        follow.follower,
+      );
+    }
+
+    if (
+      follow.following.notificationSettings.telegramNotifications &&
+      follow.following.telegramId
+    ) {
+      await this.telegramService.sendNewFollowing(
+        follow.following.telegramId,
+        follow.follower,
+      );
+    }
 
     return true;
   }
